@@ -33,6 +33,12 @@ jobs:
         working-directory: ./back
         run: mvn jacoco:report
 
+      - name: Upload Backend Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: back/target/site/jacoco/
+
   # Job 2: Tests Frontend
   test-frontend:
     runs-on: ubuntu-latest
@@ -54,7 +60,7 @@ jobs:
         run: npm run test:ci
 
       - name: Coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: karma-report
           path: front/coverage
