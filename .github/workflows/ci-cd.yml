@@ -37,7 +37,8 @@ jobs:
   test-frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v4
       
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -46,11 +47,17 @@ jobs:
           
       - name: Install Frontend Dependencies
         working-directory: ./front
-        run: npm ci
+        run: npm install
         
       - name: Run Frontend Tests
         working-directory: ./front
-        run: npm run test -- --watch=false --code-coverage
+        run: npm run test:ci
+
+      - name: Coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: karma-report
+          path: front/coverage
 
   # Job 3: Analyse SonarCloud backend
   sonarcloud:
@@ -80,7 +87,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           mvn clean verify sonar:sonar \
-            -Dsonar.projectKey=bobapp-backtend \
+            -Dsonar.projectKey=afarkhsi_bobapp-backend \
             -Dsonar.organization=afarkhsi \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
@@ -102,11 +109,11 @@ jobs:
           
       - name: Install Frontend Dependencies
         working-directory: ./front
-        run: npm ci
+        run: npm install
         
       - name: Run Tests with Coverage
         working-directory: ./front
-        run: npm run test -- --watch=false --code-coverage --browsers=ChromeHeadless
+        run: npm run test:ci
         
       - name: SonarCloud Scan Frontend
         uses: sonarsource/sonarcloud-github-action@master
@@ -116,7 +123,7 @@ jobs:
         with:
           projectBaseDir: front/
           args: >
-            -Dsonar.projectKey=bobapp-frontend
+            -Dsonar.projectKey=afarkhsi_bobapp-frontend
             -Dsonar.organization=afarkhsi
             -Dsonar.exclusions=**/node_modules/**,**/*.spec.ts
             -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
