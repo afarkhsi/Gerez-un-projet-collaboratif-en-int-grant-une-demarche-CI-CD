@@ -191,3 +191,5 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-front:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-front:${{ github.sha }}
+
+            
